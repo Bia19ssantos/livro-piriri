@@ -4,7 +4,7 @@ import streamlit as st
 import base64
 from io import BytesIO
 
-st.set_page_config(page_title="Piriri e o Livro Perdido", layout="wide")
+st.set_page_config(page_title="", layout="wide")
 
 PAGES_DIR = Path("pages")
 image_files = sorted(PAGES_DIR.glob("*.png"))
