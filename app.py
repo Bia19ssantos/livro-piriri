@@ -1,43 +1,40 @@
 from pathlib import Path
+from PIL import Image
 import streamlit as st
 
-st.set_page_config(
-    page_title="Piriri e o Livro Perdido",
-    layout="wide"
-)
+st.set_page_config(page_title="Piriri e o Livro Perdido", layout="wide")
 
-st.title("Piriri e o Livro Perdido")
+st.markdown("<h1 style='text-align:center;'>Piriri e o Livro Perdido</h1>", unsafe_allow_html=True)
 
-pages_dir = Path("pages")
+pages = sorted(Path("pages").glob("*.png"))
 
-pages = sorted(pages_dir.glob("*.png"))
-
-if len(pages) == 0:
-    st.error("Nenhuma página encontrada na pasta pages.")
+if not pages:
+    st.error("Nenhuma imagem encontrada na pasta pages.")
     st.stop()
 
 if "page" not in st.session_state:
     st.session_state.page = 0
 
+st.session_state.page = max(0, min(st.session_state.page, len(pages) - 1))
+
 col1, col2, col3 = st.columns([1, 6, 1])
 
 with col1:
-    if st.button("⬅️ Anterior"):
-        st.session_state.page = max(0, st.session_state.page - 1)
+    if st.button("⬅️ Anterior", disabled=st.session_state.page == 0):
+        st.session_state.page -= 1
+        st.rerun()
 
 with col3:
-    if st.button("Próxima ➡️"):
-        st.session_state.page = min(
-            len(pages) - 1,
-            st.session_state.page + 1
-        )
+    if st.button("Próxima ➡️", disabled=st.session_state.page == len(pages) - 1):
+        st.session_state.page += 1
+        st.rerun()
 
 with col2:
-    st.image(
-        str(pages[st.session_state.page]),
-        use_container_width=True
-    )
+    img = Image.open(pages[st.session_state.page])
+    img.thumbnail((1600, 1600))
+    st.image(img, use_container_width=True)
 
 st.markdown(
-    f"Página {st.session_state.page + 1} de {len(pages)}"
+    f"<p style='text-align:center;'>Página {st.session_state.page + 1} de {len(pages)}</p>",
+    unsafe_allow_html=True
 )
